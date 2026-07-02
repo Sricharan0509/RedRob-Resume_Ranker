@@ -1,0 +1,28 @@
+# ── Hackathon-provided input (465 MB) — not our code; judges supply this file ──
+# Drop the official candidates.jsonl into data/ before running (see README).
+/data/candidates.jsonl
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ── Virtual environments ────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── Local vector DB built by build_index.py (regenerable, can be large) ───────
+/artifacts/chroma/
+
+# ── Model / HF caches ─────────────────────────────────────────────────────────
+.cache/
+*.log
+
+# ── OS / editor junk ──────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

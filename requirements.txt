@@ -1,0 +1,24 @@
+# RAG candidate ranker — pinned, CPU-only, offline at rank time.
+# Core (required):
+numpy==1.26.4
+
+# Fast JSONL parsing (optional; stdlib json used if absent):
+orjson==3.10.7
+
+# Dense bi-encoder + local cross-encoder (OPTIONAL — only needed to run the real
+# BGE dense channel (DENSE_ENCODER_MODE="auto") or the MiniLM cross-encoder.
+# The default config uses the pure-numpy hashing encoder + lexical-overlap
+# cross-rerank, so the pipeline reproduces fully without these. They are left
+# commented so the hosted sandbox (Streamlit Cloud) builds light and reliable;
+# uncomment to install locally / for the BGE path.
+#   sentence-transformers==3.0.1
+#   torch==2.2.2
+
+# Local vector database used at BUILD time to demonstrate the RAG workflow
+# (numpy flat index is the source of truth at rank time). Optional.
+#   chromadb==0.5.5
+
+# Sandbox dashboard (interactive demo). Not needed by rank.py.
+# pandas backs app.py's results table (also a transitive streamlit dependency).
+streamlit==1.37.1
+pandas==2.2.3

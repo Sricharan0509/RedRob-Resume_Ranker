@@ -1,0 +1,123 @@
+# Redrob Hackathon — Submission Metadata (RAG candidate ranker)
+# Fill in the fields uploading.
+
+# ============================================================================
+# Team identity
+# ============================================================================
+team_name: "BuildX"  # Used in leaderboard and announcements
+
+primary_contact:
+  name: "Kothaluri Murari"
+  email: "murarikothaluri@gmail.com"   # Used for all organizer communication
+  phone: "+91-8522012134"        # Used for top-50 / top-10 outreach
+
+team_members:
+  - name: "Kothaluri Murari"
+    email: "murarikothaluri@gmail.com"
+    role: "Team Lead"          # Optional, e.g. "Team Lead", "Backend", "Data"
+  - name: "Sricharan Rachumallu"
+    email: "sricharanr0045@gmail.com"
+    role: "Team Member"
+
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
+github_repo: "https://github.com/Sricharan0509/RedRob-The_Data_and_AI_Challenge-Team_BuildX"
+
+sandbox_link: "https://huggingface.co/spaces/YOUR_USERNAME/redrob-ranker"
+# Acceptable: HuggingFace Spaces, Streamlit Cloud, Replit, Colab, Binder, Docker
+
+reproduce_command: "python rank.py --candidates ./data/candidates.jsonl --out ./submission.csv"
+
+# ============================================================================
+# Compute environment
+# ============================================================================
+compute:
+  platform: "Windows 11 Home Single Language 10.0.26200 (local machine)"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.11+"
+  os: "Windows 11"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: true          # build_index.py (offline, unbudgeted)
+  pre_computation_time_minutes: 5         # actual, hashing-fallback encoder + BM25 over 100K
+  # (real BGE-small would be ~165 min for the same 100K pool on this CPU;
+  # not used for the shipped artifacts -- see methodology_summary Phase 2)
+
+# ============================================================================
+# AI tools declaration
+# ============================================================================
+ai_tools_used:
+  - "Claude Code"
+  - "Gemini"
+
+ai_usage_summary: |
+  AI tools were used as development assistants during the implementation of this
+  project, helping accelerate prototyping and code generation for selected
+  components. The overall system was engineered, integrated, adapted, and
+  validated through human decision-making. The final pipeline, local deployment
+  strategy, scoring configuration, guardrail implementation, ranking heuristics,
+  disqualifier rules, honeypot logic, and job-description query formulation were
+  reviewed, refined, and approved by the project authors. The completed system
+  operates entirely on local compute for candidate ranking, with no candidate
+  data transmitted to hosted LLMs or external inference APIs.
+
+# ============================================================================
+# Approach summary
+# ============================================================================
+methodology_summary: |
+  This project implements a fully local, multi-stage Retrieval-Augmented Ranking
+  (RAG) pipeline designed to satisfy the competition's privacy, reproducibility,
+  and resource constraints.
+
+  Phase 1 - Profile Processing & Feature Engineering. Candidate profiles are
+  transformed into career-weighted documents that prioritize long-term
+  professional experience while extracting structured evaluation signals
+  including role alignment, career evidence, trusted skill relevance, experience
+  progression, ranking-evaluation literacy, and product-company experience.
+  Additional heuristics apply bounded penalties for predefined edge cases, while
+  a consistency gate identifies logically contradictory profiles.
+
+  Phase 2 - Hybrid Retrieval. Candidate profiles are indexed using both semantic
+  and lexical retrieval. Dense retrieval is performed using local embeddings
+  (BAAI/bge-small-en-v1.5 when available), while BM25 provides complementary
+  lexical matching over the same corpus. For the submitted artifacts, a
+  deterministic hashing encoder was used to generate the shipped index to
+  maintain reproducibility within the available offline build budget. The
+  production embedding pipeline remains fully implemented and validated. Semantic
+  and lexical scores are min-max normalized over the pool and blended into a
+  single hybrid similarity score.
+
+  Phase 3 - Composite Candidate Scoring. Structured evaluation signals and hybrid
+  retrieval scores are combined into a unified recruiter-fit score. Additional
+  multiplicative gating factors incorporate role evidence, candidate
+  availability, and profile consistency, ensuring ranking decisions reflect
+  multiple independent evaluation signals rather than keyword matching alone.
+
+  Phase 4 - Cross-Encoder Refinement. The highest-ranked shortlist is
+  re-evaluated using a local cross-encoder (ms-marco-MiniLM-L-6-v2), enabling
+  deeper interaction between the job description and each candidate profile. This
+  second-stage reranking improves precision among the strongest candidates while
+  remaining entirely offline.
+
+  Candidate explanations are generated deterministically from structured profile
+  data rather than by a language model, ensuring explanations remain reproducible
+  and grounded in observable profile information.
+
+  The complete ranking pipeline executes locally, processing a 100K-candidate
+  dataset on CPU hardware with prebuilt artifacts while remaining within the
+  competition's memory constraints. When pretrained models are unavailable, the
+  system automatically falls back to a deterministic hashing encoder and
+  in-memory BM25 implementation, preserving reproducibility and offline execution
+  without altering the overall ranking workflow.
+
+# ============================================================================
+# Declarations
+# ============================================================================
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
